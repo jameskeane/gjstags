@@ -31,6 +31,24 @@ public class CTag {
         return name;
     }
 
+    public String getSanitizedName() {
+        // HACK
+        // The Closure Library has some JavaScript object literals that use
+        // these characters as keys, causing ctags to fail. Trim such
+        // characters from the strings.
+        String result = name;
+        if (name.length() > 0) {
+            char lastChar = name.charAt(name.length() - 1);
+            if (lastChar == 0x00 || lastChar == '\b' || lastChar == '\f' ||
+                lastChar == '\n' || lastChar == '\r' || lastChar == '\t' ||
+                lastChar == '\\' || lastChar == '\'' || lastChar == 0x0B ||
+                lastChar == '"') {
+                result = name.substring(0, name.length() - 1);
+            }
+        }
+        return result;
+    }
+
     public String getFile() {
         return file;
     }
@@ -44,10 +62,12 @@ public class CTag {
     }
 
     public String getCTagString() {
-        return this.getName() + "\t" + this.getFile() + "\t" + this.getAddress() + this.getMeta() + "\n";
+        return this.getSanitizedName() + "\t" + this.getFile() + "\t" +
+            this.getAddress() + this.getMeta() + "\n";
+    }
 
     public void writeCTagString(Writer writer) throws IOException {
-        writer.write(this.getName());
+        writer.write(this.getSanitizedName());
         writer.write('\t');
         writer.write(this.getFile());
         writer.write('\t');
