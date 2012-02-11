@@ -54,6 +54,7 @@ public class CommandLineRunner {
             "\n" +
             "Options:\n" +
             "  -a Append the tags to an existing tag file. Disabled by default. \n" +
+            "  -e Output tag file for use with Emacs.\n" +
             "  -f <file>\n" +
             "     Write tags to specified file. 'tags' by default.\n" +
             "  -o Alias for -f\n" +
@@ -76,6 +77,7 @@ public class CommandLineRunner {
         boolean isRecursive = false;
         String outputFile = "tags";
         boolean appendTags = false;
+        boolean etags = false;
         List<String> inputs = new ArrayList<String>();
         String baseDir = null;
 
@@ -99,6 +101,8 @@ public class CommandLineRunner {
                 outputFile = args[++i];
             } else if (arg.equals("-a")) {
                 appendTags = true;
+            } else if (arg.equals("-e")) {
+                etags = true;
             } else if (arg.equals("-b") || arg.equals("--basedir")) {
                 if (i < (args.length - 1)) {
                     baseDir = args[++i];
@@ -119,7 +123,7 @@ public class CommandLineRunner {
                     realInputFiles.add(input);
                 }
             }
-        }else {
+        } else {
             for (String input : inputs) {
                 File f = new File(input);
                 if (f.isFile() && f.exists()) {
@@ -146,7 +150,10 @@ public class CommandLineRunner {
         }
 
         file.update(cTagsBuilder.getTags());
-        file.write(outputFile);
+        if (etags)
+          file.writeETags(outputFile);
+        else
+          file.writeCTags(outputFile);
     }
 
     private static List<String> getJSFilesFromDir(String path) {

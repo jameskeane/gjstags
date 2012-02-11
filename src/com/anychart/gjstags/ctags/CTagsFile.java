@@ -21,8 +21,13 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.StringWriter;
 import java.io.IOException;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.TreeMap;
 import java.util.Collections;
 import java.util.List;
 
@@ -57,6 +62,31 @@ public class CTagsFile {
         }
 
         Collections.addAll(this.entries, newEntries);
+    }
+
+    public void writeETags(String fileName) throws IOException {
+        BufferedWriter writer =
+            new BufferedWriter(new FileWriter(fileName));
+        HashMap<String, List<CTag>> byFile = new HashMap<String, List<CTag>>();
+            if (!byFile.containsKey(tag.getFile()))
+                byFile.put(tag.getFile(), new ArrayList<CTag>());
+            byFile.get(tag.getFile()).add(tag);
+        }
+        Iterator<Map.Entry<String, List<CTag>>> entries = byFile.entrySet().iterator();
+        while (entries.hasNext()) {
+            Map.Entry<String, List<CTag>> entry = entries.next();
+            String file = entry.getKey();
+            List<CTag> entriesByFile = entry.getValue();
+            writer.write((char)0x0c);
+            writer.write('\n');
+            writer.write(file);
+            writer.write(',');
+            writer.write('\n');
+            for (CTag tag : entriesByFile) {
+                tag.writeETagString(writer);
+            }
+        }
+        writer.close();
     }
 
     public void write(String fileName) throws IOException {

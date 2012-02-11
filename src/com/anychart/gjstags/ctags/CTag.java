@@ -66,6 +66,14 @@ public class CTag {
             this.getAddress() + this.getMeta() + "\n";
     }
 
+    public void writeETagString(Writer writer) throws IOException {
+        writer.write((char)0x7f);
+        writer.write(this.getSanitizedName());
+        writer.write((char)0x01);
+        writer.write(this.getAddress());
+        writer.write(",\n");
+    }
+
     public void writeCTagString(Writer writer) throws IOException {
         writer.write(this.getSanitizedName());
         writer.write('\t');
