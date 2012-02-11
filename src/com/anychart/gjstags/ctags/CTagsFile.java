@@ -36,9 +36,9 @@ import java.util.List;
  */
 public class CTagsFile {
 
-    private static final String HEADER =
+    private static final String CTAGS_HEADER =
             "!_TAG_FILE_FORMAT\t2\t/extended format; --format=1 will not append ;\" to lines/\n" +
-                    "!_TAG_FILE_SORTED\t0\t/0=unsorted, 1=sorted, 2=foldcase/\n" +
+                    "!_TAG_FILE_SORTED\t1\t/0=unsorted, 1=sorted, 2=foldcase/\n" +
                     "!_TAG_PROGRAM_AUTHOR\tAnyChart.Com Team\n" +
                     "!_TAG_PROGRAM_NAME\tgjstags\t//\n" +
                     "!_TAG_PROGRAM_URL\thttps://github.com/AnyChart/gjstags\t/official site/\n" +
@@ -68,6 +68,7 @@ public class CTagsFile {
         BufferedWriter writer =
             new BufferedWriter(new FileWriter(fileName));
         HashMap<String, List<CTag>> byFile = new HashMap<String, List<CTag>>();
+        for (CTag tag : this.entries) {
             if (!byFile.containsKey(tag.getFile()))
                 byFile.put(tag.getFile(), new ArrayList<CTag>());
             byFile.get(tag.getFile()).add(tag);
@@ -89,11 +90,23 @@ public class CTagsFile {
         writer.close();
     }
 
-    public void write(String fileName) throws IOException {
-        BufferedWriter writer = new BufferedWriter(new FileWriter(fileName));
-        writer.write(HEADER);
+    public void writeCTags(String fileName) throws IOException {
+        BufferedWriter writer =
+            new BufferedWriter(new FileWriter(fileName));
+        writer.write(CTAGS_HEADER);
+        TreeMap<String, List<CTag>> sorted = new TreeMap<String, List<CTag>>();
         for (CTag tag : this.entries) {
-            tag.writeCTagString(writer);
+            if (!sorted.containsKey(tag.getSanitizedName()))
+                sorted.put(tag.getSanitizedName(), new ArrayList<CTag>());
+            sorted.get(tag.getSanitizedName()).add(tag);
+        }
+        Iterator<Map.Entry<String, List<CTag>>> entries = sorted.entrySet().iterator();
+        while (entries.hasNext()) {
+            Map.Entry<String, List<CTag>> entry = entries.next();
+            List<CTag> entriesByName = entry.getValue();
+            for (CTag tag : entriesByName) {
+                tag.writeCTagString(writer);
+            }
         }
         writer.close();
     }
