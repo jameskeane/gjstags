@@ -11,15 +11,16 @@ compile:
 
 install:
 	cp bin/gjstags $(PREFIX)/bin/gjstags
-	cp bin/gjstags.jar $(PREFIX)/bin/gjstags.jar
-	cp libs/compiler.jar $(PREFIX)/bin/compiler.jar
+	cp bin/gjstags.jar $(PREFIX)/bin/gjstags_/gjstags.jar
+	cp libs/compiler.jar $(PREFIX)/bin/gjstags_/compiler.jar
 	chmod go+x $(PREFIX)/bin/gjstags
-	chmod go+r $(PREFIX)/bin/gjstags.jar
-	chmod go+r $(PREFIX)/bin/compiler.jar
+	chmod go+r $(PREFIX)/bin/gjstags_/gjstags.jar
+	chmod go+r $(PREFIX)/bin/gjstags_/compiler.jar
 
 clean:
 	rm -rf bin/*
 	rm -rf classes/*
 	rm -f Makefile
 	rm -f $(PREFIX)/bin/gjstags
-	rm -f $(PREFIX)/bin/gjstags.jar
+	rm -f $(PREFIX)/bin/gjstags_/gjstags.jar
+	rm -f $(PREFIX)/bin/gjstags_/compiler.jar

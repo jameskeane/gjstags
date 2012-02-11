@@ -13,4 +13,5 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-exec java -jar @path@/gjstags.jar $@
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+exec java -Xmx2000m -jar $DIR/gjstags_/gjstags.jar $@
